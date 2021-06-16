@@ -1,3 +1,5 @@
+#from termcolor import colored
+
 def setUpField(width, placeHolder):
 	f = []
 	for col in range(width):
@@ -7,9 +9,9 @@ def setUpField(width, placeHolder):
 		f.append(row)
 	return f
 
+#Displays game field
 def printField(noOfTurns):
-	print("Turn Number " + str(noOfTurns))
-	print()
+	print("Turn Number " + str(noOfTurns) + "\n")
 	width = len(field)
 	for i in range(width):
 		if i == 6:
@@ -25,29 +27,39 @@ def printField(noOfTurns):
 				print(field[row][col], end="")
 	print()
 
+#Allows player to choose a column - ERROR HANDLING HOMEWORK
 def chooseColumn(board, playerNo):
 	turnEnd = False
 	while turnEnd == False:
+		#playerColor = colored("X", 'red')
 		playerColor = "X"
 		wid = len(board)
-		column = int(input("Player " + str(playerNo) + "- Choose a row: ")) - 1
-		print()
-			
-		if column >= 0 and column <= wid - 1:
+		
+		try:
+			column = int(input("Player " + str(playerNo) + "- Choose a row: " + "\n")) - 1
+
 			if board[wid - 1][column] == placeHolder:
-				for i in range(0, wid):
-					if(board[i][column] == placeHolder):
-						if playerNo == 2:
-							playerColor = "0"
-						board[i][column] = " " + str(playerColor) + " "
-						turnEnd = True
-						break
+					for i in range(0, wid):
+						if(board[i][column] == placeHolder):
+							if playerNo == 2:
+								#playerColor = colored("0", 'yellow')
+								playerColor = "0"
+							board[i][column] = " " + str(playerColor) + " "
+							turnEnd = True
+							break
 			else:
-				print("This is row cannot be selected as it is full. Please choose again.")
-		else: 
-			print("Please enter a valid row.")
+				print("Player " + str(playerNo) + "- This columnn is full. Please choose another column.")
+			
+		except ValueError:
+			print("Player " + str(playerNo) + "- You have entered an incorrect value.")
+		except IndexError:
+			print("Player " + str(playerNo) + "- You have selected outside of the suggested range")
+		except Exception as e:
+			print(str(e))
+		finally:
+			print("Player " + str(playerNo) + "- Please enter a valid input")
 
-
+#Checks if a plyaer has made 4 in a row
 def checkWinner(board):
 	width = len(board)
 	winnerFound = False
@@ -84,6 +96,7 @@ def checkWinner(board):
 
 	return winnerFound
 
+#Runs the game
 def gameLoop(board, playerNo, turnEnd):
 	isWin = False
 	turnNumber = 1
@@ -108,12 +121,10 @@ def gameLoop(board, playerNo, turnEnd):
 	else:
 		print("Draw!")
 
-
-
-field = []
-player = 1
-width = 7
-endTurn = False
+field = [] #The game field
+width = 7 #The width of the game field
+player = 1 #Determines which Player's turn it is
+endTurn = False 
 placeHolder = " * "
 field = setUpField(width, placeHolder)
 gameLoop(field, player, endTurn)
