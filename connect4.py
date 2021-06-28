@@ -30,15 +30,20 @@ def printField(noOfTurns):
 #Allows player to choose a column - ERROR HANDLING HOMEWORK
 def chooseColumn(board, playerNo):
 	turnEnd = False
+	isQuit = False
 	while turnEnd == False:
 		#playerColor = colored("X", 'red')
 		playerColor = "X"
 		wid = len(board)
 		
 		try:
-			column = int(input("Player " + str(playerNo) + "- Choose a row: " + "\n")) - 1
+			column = int(input("Player " + playerNo + "- Choose a row: " + "\n")) - 1
 
-			if board[wid - 1][column] == placeHolder:
+			if column == 7:
+				print("Player " + playerNo + " wishes to quit the game.")
+				isQuit = True
+				break
+			elif board[wid - 1][column] == placeHolder:
 					for i in range(0, wid):
 						if(board[i][column] == placeHolder):
 							if playerNo == 2:
@@ -48,16 +53,16 @@ def chooseColumn(board, playerNo):
 							turnEnd = True
 							break
 			else:
-				print("Player " + str(playerNo) + "- This columnn is full. Please choose another column.")
+				print("Player " + playerNo + "- This columnn is full. Please choose another column.")
 			
 		except ValueError:
-			print("Player " + str(playerNo) + "- You have entered an incorrect value.")
+			print("Player " + playerNo + "- You have entered an incorrect value.")
 		except IndexError:
-			print("Player " + str(playerNo) + "- You have selected outside of the suggested range")
+			print("Player " + playerNo + "- You have selected outside of the suggested range")
 		except Exception as e:
 			print(str(e))
-		finally:
-			print("Player " + str(playerNo) + "- Please enter a valid input")
+
+	return isQuit
 
 #Checks if a plyaer has made 4 in a row
 def checkWinner(board):
@@ -99,31 +104,36 @@ def checkWinner(board):
 #Runs the game
 def gameLoop(board, playerNo, turnEnd):
 	isWin = False
+	isQuit = False
 	turnNumber = 1
-	while(turnNumber <= 49 and isWin == False):
-		if playerNo == 1:
-			chooseColumn(board, playerNo)
-			isWin = checkWinner(board)
-
-			if isWin == False: playerNo = 2
+	while(turnNumber <= 49 and isWin == False and isQuit == False):
+		if playerNo == "1":
+			isQuit = chooseColumn(board, playerNo)
+			if not isQuit:
+				isWin = checkWinner(board)
+				playerNo = "2"
 		else: 
-			chooseColumn(board, playerNo)
-			isWin = checkWinner(board)
-			if isWin == False: playerNo = 1
+			isQuit = chooseColumn(board, playerNo)
+			if not isQuit:
+				isWin = checkWinner(board, playerNo)
+				playerNo = "1"
 
-		printField(turnNumber)
-		turnNumber += 1
+		if not isQuit:
+			printField(turnNumber)
+			turnNumber += 1
 
 	print("Game Over!")
 
 	if isWin:
 		print("Player " + str(playerNo) + " is the Winner")
+	elif isQuit:
+		print("Player " + str(playerNo) + " has quit the game.")
 	else:
 		print("Draw!")
 
 field = [] #The game field
 width = 7 #The width of the game field
-player = 1 #Determines which Player's turn it is
+player = "1" #Determines which Player's turn it is
 endTurn = False 
 placeHolder = " * "
 field = setUpField(width, placeHolder)
